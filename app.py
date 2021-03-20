@@ -293,7 +293,7 @@ if __name__ == '__main__':
 
 
 	if file:
-		data = load_data(file.name)
+		data = load_data(file)
 
 		users = set(data['sender'])
 
