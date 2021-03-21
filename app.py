@@ -95,6 +95,7 @@ def timeSeries(data):
 	timeseries['date'] = pd.to_datetime(data['datetime']).dt.to_period('M').unique()
 	timeseries['date'] = timeseries['date'].astype(str)
 	timeseries['monthly count'] = monthly_count
+	timeseries = timeseries.sort_values(by='date',ascending=True)
 
 	daily_timeseries = pd.DataFrame(data["date"])
 	daily_timeseries['Message Count'] = 1
@@ -220,7 +221,7 @@ def emojis(data):
 def most_used_emojis(emoji_data):
 	most_used = pd.DataFrame(emoji_data.groupby(['emoji']).size().sort_values(ascending=False).head(10))
 
-	fig = px.pie(most_used, values=most_used[0], names=most_used.index,width=700, height=700)
+	fig = px.pie(most_used, values=most_used[0], names=most_used.index)
 	fig.update_traces(textposition='outside', textinfo='percent+label')
 	st.plotly_chart(fig)
 
@@ -235,12 +236,12 @@ def emojis_by_user(emoji_data):
 	emoji_count.columns = ['sender', 'emoji', 'count']
 
 	for i in users:
-		emoji_count_by_sender_top_n = emoji_count[emoji_count['sender']==i].head(10).sort_values(by='count',ascending=False).reset_index(drop=True)    
+		emoji_count_by_sender_top_n = emoji_count[emoji_count['sender']==i].head(5).sort_values(by='count',ascending=False).reset_index(drop=True)    
 		emoji_count_by_sender_top_n = pd.DataFrame(emoji_count_by_sender_top_n)
 
 		fig = px.pie(emoji_count_by_sender_top_n, values=emoji_count_by_sender_top_n['count'],
 			names=emoji_count_by_sender_top_n['emoji'],
-			title=(i+'\'s'+ " Emoji Usage"),width=700, height=700)
+			title=(i+'\'s'+ " Emoji Usage"))
 		fig.update_traces(textposition='outside', textinfo='percent+label')
 		st.plotly_chart(fig)
 
@@ -252,7 +253,7 @@ def user_by_emoji(emoji_data):
 	user_by_emoji = pd.DataFrame(emoji_data.groupby(['sender']).size().sort_values(ascending=False))
 	user_by_emoji.rename(columns={0: 'Emoji Count'}, inplace=True)
 
-	fig = px.pie(user_by_emoji, values=user_by_emoji['Emoji Count'],names=user_by_emoji.index,title=("Emoji Usage"),width=700, height=700)
+	fig = px.pie(user_by_emoji, values=user_by_emoji['Emoji Count'],names=user_by_emoji.index,title=("Emoji Usage"))
 	fig.update_traces(textposition='outside', textinfo='percent+label')
 	st.plotly_chart(fig)
 
