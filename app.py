@@ -139,16 +139,17 @@ def plotActivity(data):
 	activity_data['Weekday'] = data['datetime'].dt.weekday
 	activity_data['Month'] = data['datetime'].dt.month
 
-	activity_data['Weekday'] = activity_data['Weekday'].map(days_dict)
-	activity_data['Month'] = activity_data['Month'].map(months_dict)
-
 	activity_data["Message Count"] = 1
 
-	weekday_count = activity_data.groupby("Weekday").sum()
+	weekday_count = activity_data[['Weekday', 'Message Count']]
+	weekday_count = weekday_count.groupby("Weekday").sum()
 	weekday_count.reset_index(inplace=True)
+	weekday_count['Weekday'] = weekday_count['Weekday'].map(days_dict)
 
-	month_count = activity_data.groupby("Month").sum()
+	month_count = activity_data[['Month', 'Message Count']]
+	month_count = month_count.groupby("Month").sum()
 	month_count.reset_index(inplace=True)
+	month_count['Month'] = month_count['Month'].map(months_dict)
 
 	fig = px.line_polar(weekday_count, r='Message Count', theta='Weekday', line_close=True,
 	            title="Weekday Activity",width=700, height=700)
