@@ -27,11 +27,6 @@ def load_data(file_name):
 	data = data.dropna(subset=['text_message'])
 	data = data.drop(columns = ['text','splitted'])
 
-	data['first_name'] = data['sender'].str.split(' ', expand = True)[0]
-	data['last_name'] = data['sender'].str.split(' ', expand = True)[1]
-	data['sender'] = data['first_name'].where(data['last_name'].isnull(), data['first_name'] + ' ' + data['last_name'])
-	data = data.drop(columns = ['first_name','last_name'])
-
 	data['date'] = [d.date() for d in data['datetime']]
 	data['time'] = [d.time() for d in data['datetime']]
 
