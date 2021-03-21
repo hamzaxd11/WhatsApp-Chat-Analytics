@@ -18,7 +18,7 @@ def load_data(file_name):
 
 		# Extract datetime
 	data[['datetime_str','splitted']] = data["text"].str.split(" - ", 1, expand=True)
-	data["datetime"] = pd.to_datetime(data["datetime_str"], format="%d/%m/%Y, %I:%M %p", errors='coerce')
+	data["datetime"] = pd.to_datetime(data["datetime_str"], errors='coerce')
 	data = data.dropna(subset=['datetime'])
 	data = data.drop(columns = ['datetime_str'])
 
