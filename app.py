@@ -82,18 +82,8 @@ def userWordUsage(data):
 
 
 def timeSeries(data):
-
-	grouped = pd.DataFrame(data.groupby([data.date.dt.year, data.date.dt.month]).count())
-	grouped = pd.DataFrame(grouped.sender).reset_index(drop=True)
-	monthly_count = grouped['sender']
-
-	timeseries = pd.DataFrame()
-	timeseries['date'] = pd.to_datetime(data['date']).dt.to_period('M').unique()
-	timeseries['date'] = timeseries['date'].astype(str)
-	timeseries['monthly count'] = monthly_count
-	timeseries = timeseries.sort_values(by='date',ascending=True)
-
-
+	
+	#daily time series
 
 	new_time_series = pd.DataFrame(data["date"])
 	new_time_series['Message Count'] = 1
@@ -115,6 +105,19 @@ def timeSeries(data):
 	daily_time_series.reset_index(inplace=True)
 
 
+	#monthly time series
+	grouped = pd.DataFrame(combined.groupby([combined.date.dt.year, combined.date.dt.month]).count())
+	grouped = pd.DataFrame(grouped.date).reset_index(drop=True)
+	monthly_count = grouped['date']
+
+	timeseries = pd.DataFrame()
+	timeseries['date'] = pd.to_datetime(data['date']).dt.to_period('M').unique()
+	timeseries['date'] = timeseries['date'].astype(str)
+	timeseries['monthly count'] = monthly_count
+
+	timeseries = timeseries.sort_values(by='date',ascending=True)
+
+
 	fig = px.line(timeseries, x="date", y="monthly count",
                  labels={
                      "date": "Month",
@@ -131,8 +134,6 @@ def timeSeries(data):
 	        title="Daily Count",width=800, height=500)
 	fig.update_xaxes(nticks=40)
 	st.plotly_chart(fig)
-
-	st.write('Btw, this does not count inactive days')
 
 
 
@@ -375,4 +376,3 @@ if __name__ == '__main__':
 
 		else:
 			pass
-
