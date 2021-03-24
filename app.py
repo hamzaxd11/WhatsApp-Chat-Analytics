@@ -18,8 +18,11 @@ def load_data(file_name):
 
 		# Extract datetime
 	data[['datetime_str','splitted']] = data["text"].str.split(" - ", 1, expand=True)
-	data["datetime"] = pd.to_datetime(data["datetime_str"], errors='coerce')
-	data = data.dropna(subset=['datetime'])
+	data[['date','time']] = data["datetime_str"].str.split(", ", 1, expand=True)
+
+	data["date"] = pd.to_datetime(data["date"], format = "%d/%m/%Y", errors='coerce')
+
+	data = data.dropna(subset=['date'])
 	data = data.drop(columns = ['datetime_str'])
 
 	# Extract sender and message
@@ -27,8 +30,6 @@ def load_data(file_name):
 	data = data.dropna(subset=['text_message'])
 	data = data.drop(columns = ['text','splitted'])
 
-	data['date'] = [d.date() for d in data['datetime']]
-	data['time'] = [d.time() for d in data['datetime']]
 
 	data['text_message'] = data['text_message'].str.lower()
 	data = data[(data['text_message']!='<media omitted>') & (data['text_message']!='this message was deleted') & (data['text_message']!='you deleted this message')]
@@ -82,20 +83,38 @@ def userWordUsage(data):
 
 def timeSeries(data):
 
-	grouped = pd.DataFrame(data.groupby([data.datetime.dt.year, data.datetime.dt.month]).count())
+	grouped = pd.DataFrame(data.groupby([data.date.dt.year, data.date.dt.month]).count())
 	grouped = pd.DataFrame(grouped.sender).reset_index(drop=True)
 	monthly_count = grouped['sender']
 
 	timeseries = pd.DataFrame()
-	timeseries['date'] = pd.to_datetime(data['datetime']).dt.to_period('M').unique()
+	timeseries['date'] = pd.to_datetime(data['date']).dt.to_period('M').unique()
 	timeseries['date'] = timeseries['date'].astype(str)
 	timeseries['monthly count'] = monthly_count
 	timeseries = timeseries.sort_values(by='date',ascending=True)
 
-	daily_timeseries = pd.DataFrame(data["date"])
-	daily_timeseries['Message Count'] = 1
-	daily_timeseries = pd.DataFrame(daily_timeseries.groupby("date").sum())
-	daily_timeseries.reset_index(inplace=True)
+
+
+	new_time_series = pd.DataFrame(data["date"])
+	new_time_series['Message Count'] = 1
+	new_time_series['date'] = pd.to_datetime(new_time_series['date'])
+	new_time_series.reset_index(drop=True,inplace=True)
+
+	df_length = len(new_time_series)
+
+	start = new_time_series['date'][0]
+	end = new_time_series['date'][df_length-1]
+
+	new = pd.DataFrame(pd.date_range(start=start, end=end), columns = ['date'])
+	new['Message Count'] = 0
+
+	combined = pd.concat([new_time_series,new])
+	combined.reset_index(inplace=True,drop=True)
+
+	daily_time_series = pd.DataFrame(combined.groupby("date").sum())
+	daily_time_series.reset_index(inplace=True)
+
+
 	fig = px.line(timeseries, x="date", y="monthly count",
                  labels={
                      "date": "Month",
@@ -105,7 +124,8 @@ def timeSeries(data):
 	fig.update_xaxes(nticks=40)
 	st.plotly_chart(fig)
 
-	fig = px.line(daily_timeseries, x="date", y="Message Count",
+
+	fig = px.line(daily_time_series, x="date", y="Message Count",
 	         labels={
 	             "date": "Month"},
 	        title="Daily Count",width=800, height=500)
@@ -131,8 +151,8 @@ def plotActivity(data):
 	    7: "July", 8: "August", 9: "September", 10: "October", 11: "November", 12: "December"}
 
 	activity_data = pd.DataFrame(data["text_message"])
-	activity_data['Weekday'] = data['datetime'].dt.weekday
-	activity_data['Month'] = data['datetime'].dt.month
+	activity_data['Weekday'] = data['date'].dt.weekday
+	activity_data['Month'] = data['date'].dt.month
 
 	activity_data["Message Count"] = 1
 
