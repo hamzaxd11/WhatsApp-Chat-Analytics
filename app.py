@@ -11,16 +11,35 @@ import warnings
 
 warnings.filterwarnings('ignore')
 
+
+@st.cache
+def check_date_format(date_column):
+
+	format_list = ['%m/%d/%Y','%d/%m/%Y', '%Y/%m/%d','%m/%d/%y','%d/%m/%y','%y/%m/%d' ]
+
+	for i in format_list:
+		date = date_column.copy()
+		date = pd.to_datetime(date, format = i, errors='coerce')
+
+		if type(date[0]) == pd._libs.tslibs.nattype.NaTType:
+			pass
+		else:
+			return i
+
+
+
 @st.cache
 def load_data(file_name):
-	#raw_data_csv = pd.read_csv(file_name, delimiter = "\t", header = None, names = ['text'])
+
 	data = pd.read_csv(file_name, delimiter = "\t", header = None, names = ['text'])
 
 		# Extract datetime
 	data[['datetime_str','splitted']] = data["text"].str.split(" - ", 1, expand=True)
 	data[['date','time']] = data["datetime_str"].str.split(", ", 1, expand=True)
 
-	data["date"] = pd.to_datetime(data["date"], format = "%d/%m/%Y", errors='coerce')
+	actual_format = check_date_format(data['date'])
+
+	data["date"] = pd.to_datetime(data["date"], format = actual_format, errors='coerce')
 
 	data = data.dropna(subset=['date'])
 	data = data.drop(columns = ['datetime_str'])
@@ -236,7 +255,7 @@ def emojis(data):
 
 
 def most_used_emojis(emoji_data):
-	most_used = pd.DataFrame(emoji_data.groupby(['emoji']).size().sort_values(ascending=False).head(10))
+	most_used = pd.DataFrame(emoji_data.groupby(['emoji']).size().sort_values(ascending=False).head(5))
 
 	fig = px.pie(most_used, values=most_used[0], names=most_used.index)
 	fig.update_traces(textposition='outside', textinfo='percent+label')
