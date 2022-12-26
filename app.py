@@ -2,12 +2,15 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import emoji
 from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
-from nltk.corpus import stopwords
 import streamlit as st
-stop = stopwords.words('english')
 plt.style.use('bmh')
 import plotly.express as px
 import warnings 
+
+import nltk
+nltk.download('stopwords')
+from nltk.corpus import stopwords
+stop = stopwords.words('english')
 
 warnings.filterwarnings('ignore')
 
