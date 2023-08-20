@@ -8,7 +8,7 @@ Visit the live deployment of the app: [WhatsApp Chat Analytics App](https://hamz
 ## How to Use the App
 For a visual guide on using the app, watch our demo video below:
 
-![Demo Video](https://github.com/hamzaxd11/WhatsApp-Chat-Analytics/assets/61797832/9b679149-64aa-47e1-970a-56a853af204f)
+https://github.com/hamzaxd11/WhatsApp-Chat-Analytics/assets/61797832/9b679149-64aa-47e1-970a-56a853af204f
 
 
 ## Setting Up Locally
