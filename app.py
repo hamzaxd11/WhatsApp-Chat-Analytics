@@ -31,7 +31,7 @@ def check_date_format(date_column):
 
 
 
-@st.cache_data
+# @st.cache_data
 def load_data(file_name):
 
 	data = pd.read_csv(file_name, delimiter = "\t", header = None, names = ['text'])
