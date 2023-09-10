@@ -306,9 +306,9 @@ if __name__ == '__main__':
 
 	st.title("WhatsApp Chat Analytics")
 
-	st.sidebar.markdown('[![Muhammad Hamza Adnan]\
-                    (https://img.shields.io/badge/Author-@hamzaxd11-gray.svg?colorA=gray&colorB=dodgerblue&logo=github)]\
-                    (https://github.com/hamzaxd11/WhatsApp-Chat-Analytics/)')
+	# st.sidebar.markdown('[![Muhammad Hamza Adnan]\
+ #                    (https://img.shields.io/badge/Author-@hamzaxd11-gray.svg?colorA=gray&colorB=dodgerblue&logo=github)]\
+ #                    (https://github.com/hamzaxd11/WhatsApp-Chat-Analytics/)')
 
 	st.markdown("Analyze your Whatsapp chats and get fun insights!")
 
