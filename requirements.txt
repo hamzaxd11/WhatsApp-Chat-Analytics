@@ -1,3 +1,4 @@
+streamlit==1.14.0
 emoji==0.6.0
 matplotlib==3.3.4
 nltk==3.5
