@@ -15,7 +15,7 @@ stop = stopwords.words('english')
 warnings.filterwarnings('ignore')
 
 
-# @st.cache
+@st.cache
 def check_date_format(date_column):
 
 	format_list = ['%m/%d/%Y','%d/%m/%Y', '%Y/%m/%d','%m/%d/%y','%d/%m/%y','%y/%m/%d' ]
@@ -31,7 +31,7 @@ def check_date_format(date_column):
 
 
 
-# @st.cache_data
+@st.cache
 def load_data(file_name):
 
 	data = pd.read_csv(file_name, delimiter = "\t", header = None, names = ['text'])
@@ -243,7 +243,7 @@ def individualWordCloud(data):
 
 
 
-@st.cache_data
+@st.cache
 def emojis(data):
 	emojis = pd.DataFrame(columns=['sender','emoji'])
 
