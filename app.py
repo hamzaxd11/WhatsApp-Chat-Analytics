@@ -15,7 +15,7 @@ stop = stopwords.words('english')
 warnings.filterwarnings('ignore')
 
 
-# @st.cache
+@st.cache
 def check_date_format(date_column):
 
 	format_list = ['%m/%d/%Y','%d/%m/%Y', '%Y/%m/%d','%m/%d/%y','%d/%m/%y','%y/%m/%d' ]
@@ -31,35 +31,35 @@ def check_date_format(date_column):
 
 
 
-# @st.cache
+@st.cache
 def load_data(file_name):
 
 	data = pd.read_csv(file_name, delimiter = "\t", header = None, names = ['text'])
 
-		# Extract datetime
+	# Extract datetime
 	data[['datetime_str','splitted']] = data["text"].str.split(" - ", 1, expand=True)
 	data[['date','time']] = data["datetime_str"].str.split(", ", 1, expand=True)
-
+	
 	actual_format = check_date_format(data['date'])
-
+	
 	data["date"] = pd.to_datetime(data["date"], format = actual_format, errors='coerce')
-
+	
 	data = data.dropna(subset=['date'])
 	data = data.drop(columns = ['datetime_str'])
-
+	
 	# Extract sender and message
 	data[['sender','text_message']] = data['splitted'].str.split(': ', 1, expand=True)
 	data = data.dropna(subset=['text_message'])
 	data = data.drop(columns = ['text','splitted'])
-
-
+	
+	
 	data['text_message'] = data['text_message'].str.lower()
 	data = data[(data['text_message']!='<media omitted>') & (data['text_message']!='this message was deleted') & (data['text_message']!='you deleted this message')]
 	data['text_message'] = data['text_message'].str.split()
-
+	
 	data['text_message'] = data['text_message'].apply(lambda x: ' '.join(item for item in x if item not in stop and 'http' not in item and not item.startswith('@') and '@' not in item))  
 	data = data[(data['text_message']!='')]
-
+	
 	return data
 
 
@@ -243,7 +243,7 @@ def individualWordCloud(data):
 
 
 
-# @st.cache
+@st.cache
 def emojis(data):
 	emojis = pd.DataFrame(columns=['sender','emoji'])
 
