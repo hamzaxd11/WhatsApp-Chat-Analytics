@@ -39,8 +39,12 @@ def load_data(file_name):
 	# Convert the 'text' column to string type to ensure consistency
 	data["text"] = data["text"].astype(str)
 	
-	# Extract datetime
-	data[['datetime_str','splitted']] = data["text"].str.split(" - ", 1, expand=True)
+        try:
+            # Extract datetime
+            data[['datetime_str', 'splitted']] = data["text"].str.split(" - ", 1, expand=True)
+        except ValueError as e:
+            st.error(f"Error while splitting the 'text' column: {e}")
+            return pd.DataFrame()
 	data[['date','time']] = data["datetime_str"].str.split(", ", 1, expand=True)
 	
 	actual_format = check_date_format(data['date'])
