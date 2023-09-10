@@ -35,7 +35,10 @@ def check_date_format(date_column):
 def load_data(file_name):
 
 	data = pd.read_csv(file_name, delimiter = "\t", header = None, names = ['text'])
-
+	
+	# Convert the 'text' column to string type to ensure consistency
+	data["text"] = data["text"].astype(str)
+	
 	# Extract datetime
 	data[['datetime_str','splitted']] = data["text"].str.split(" - ", 1, expand=True)
 	data[['date','time']] = data["datetime_str"].str.split(", ", 1, expand=True)
